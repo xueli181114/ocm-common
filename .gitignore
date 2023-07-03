@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+docs/
+ocm-common
+/*policy.json
+.envrc
+.env
+cover.out
+

@@ -3,6 +3,7 @@ module github.com/openshift-online/ocm-common
 go 1.19
 
 require (
+	github.com/hashicorp/go-version v1.6.0
 	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.8
 )

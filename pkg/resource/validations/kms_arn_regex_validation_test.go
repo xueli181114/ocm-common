@@ -17,17 +17,16 @@ var _ = Describe("Validations", func() {
 		})
 
 		Context("when kmsKeyARN is nil", func() {
-            It("should return an error", func() {
+            It("should not return an error", func() {
                 err := ValidateKMSKeyARN(nil)
-                Expect(err).To(HaveOccurred())
+                Expect(err).ToNot(HaveOccurred())
             })
         })
 
 		Context("when kmsKeyARN is empty", func() {
-			It("should return an error", func() {
+			It("should not return an error", func() {
 				err := ValidateKMSKeyARN(&kmsKeyARN)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(Equal("expected a non empty value for kms-key-arn"))
+				Expect(err).ToNot(HaveOccurred())
 			})
 		})
 

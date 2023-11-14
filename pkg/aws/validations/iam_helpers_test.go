@@ -2,14 +2,14 @@ package validations
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	iamtypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("AWS IAM Functions", func() {
+var _ = Describe("AWS iamtypes Functions", func() {
 	Describe("GetRoleName", func() {
 		It("should generate a role name with the given prefix and role name", func() {
 			prefix := "myPrefix"
@@ -34,7 +34,7 @@ var _ = Describe("AWS IAM Functions", func() {
 
 	Describe("isManagedRole", func() {
 		It("should return true if the 'ManagedPolicies' tag has the value 'true'", func() {
-			roleTags := []*iam.Tag{
+			roleTags := []*iamtypes.Tag{
 				{Key: aws.String(ManagedPolicies), Value: aws.String("true")},
 			}
 
@@ -44,7 +44,7 @@ var _ = Describe("AWS IAM Functions", func() {
 		})
 
 		It("should return false if the 'ManagedPolicies' tag does not have the value 'true'", func() {
-			roleTags := []*iam.Tag{
+			roleTags := []*iamtypes.Tag{
 				{Key: aws.String(ManagedPolicies), Value: aws.String("false")},
 			}
 
@@ -54,7 +54,7 @@ var _ = Describe("AWS IAM Functions", func() {
 		})
 
 		It("should return false if the 'ManagedPolicies' tag is not present", func() {
-			roleTags := []*iam.Tag{
+			roleTags := []*iamtypes.Tag{
 				{Key: aws.String("SomeOtherTag"), Value: aws.String("true")},
 			}
 
@@ -65,10 +65,10 @@ var _ = Describe("AWS IAM Functions", func() {
 	})
 
 	var _ = Describe("HasCompatibleVersionTags", func() {
-		var iamTags []*iam.Tag
+		var iamtypesTags []*iamtypes.Tag
 
 		BeforeEach(func() {
-			iamTags = []*iam.Tag{
+			iamtypesTags = []*iamtypes.Tag{
 				{Key: aws.String(OpenShiftVersion), Value: aws.String("1.2.3")},
 				{Key: aws.String("SomeOtherTag"), Value: aws.String("value")},
 			}
@@ -77,7 +77,7 @@ var _ = Describe("AWS IAM Functions", func() {
 		It("should return true if the version tag matches the provided version", func() {
 			version := "1.2.3"
 
-			result, err := HasCompatibleVersionTags(iamTags, version)
+			result, err := HasCompatibleVersionTags(iamtypesTags, version)
 
 			Expect(result).To(BeTrue())
 			Expect(err).To(BeNil())
@@ -86,7 +86,7 @@ var _ = Describe("AWS IAM Functions", func() {
 		It("should return false if the version tag does not match the provided version", func() {
 			version := "2.0.0"
 
-			result, err := HasCompatibleVersionTags(iamTags, version)
+			result, err := HasCompatibleVersionTags(iamtypesTags, version)
 
 			Expect(result).To(BeFalse())
 			Expect(err).To(BeNil())
@@ -94,11 +94,11 @@ var _ = Describe("AWS IAM Functions", func() {
 
 		It("should return false if the version tag is not present", func() {
 			version := "1.2.3"
-			iamTags = []*iam.Tag{
+			iamtypesTags = []*iamtypes.Tag{
 				{Key: aws.String("SomeOtherTag"), Value: aws.String("value")},
 			}
 
-			result, err := HasCompatibleVersionTags(iamTags, version)
+			result, err := HasCompatibleVersionTags(iamtypesTags, version)
 
 			Expect(result).To(BeFalse())
 			Expect(err).To(BeNil())
@@ -107,36 +107,36 @@ var _ = Describe("AWS IAM Functions", func() {
 		It("should return an error if the provided version is not a valid semantic version", func() {
 			version := "invalid-version"
 
-			result, err := HasCompatibleVersionTags(iamTags, version)
+			result, err := HasCompatibleVersionTags(iamtypesTags, version)
 
 			Expect(result).To(BeFalse())
 			Expect(err).ToNot(BeNil())
 		})
 	})
 
-	var _ = Describe("IamResourceHasTag", func() {
+	var _ = Describe("iamtypesResourceHasTag", func() {
 		It("should return true if the tag with the specified key and value exists", func() {
-			iamTags := []*iam.Tag{
+			iamtypesTags := []*iamtypes.Tag{
 				{Key: aws.String("Tag1"), Value: aws.String("Value1")},
 				{Key: aws.String("Tag2"), Value: aws.String("Value2")},
 			}
 			tagKey := "Tag1"
 			tagValue := "Value1"
 
-			result := IamResourceHasTag(iamTags, tagKey, tagValue)
+			result := IamResourceHasTag(iamtypesTags, tagKey, tagValue)
 
 			Expect(result).To(BeTrue())
 		})
 
 		It("should return false if the tag with the specified key and value does not exist", func() {
-			iamTags := []*iam.Tag{
+			iamtypesTags := []*iamtypes.Tag{
 				{Key: aws.String("Tag1"), Value: aws.String("Value1")},
 				{Key: aws.String("Tag2"), Value: aws.String("Value2")},
 			}
 			tagKey := "Tag3"
 			tagValue := "Value3"
 
-			result := IamResourceHasTag(iamTags, tagKey, tagValue)
+			result := IamResourceHasTag(iamtypesTags, tagKey, tagValue)
 
 			Expect(result).To(BeFalse())
 		})

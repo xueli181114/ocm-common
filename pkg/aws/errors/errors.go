@@ -75,3 +75,8 @@ func IsInvalidTokenException(err error) bool {
 	return IsErrorCode(err, InvalidClientTokenID)
 }
 
+func IsDeleteConfictException(err error) bool {
+	var deleteConflict *iamtypes.DeleteConflictException
+	return errors.As(err, &deleteConflict)
+}
+

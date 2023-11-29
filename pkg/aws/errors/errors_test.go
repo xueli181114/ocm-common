@@ -65,4 +65,10 @@ var _ = Describe("Error Checks", func() {
 		Expect(IsErrorCode(err, "DifferentCode")).To(BeFalse())
 	})
 
+	It("should identify IsDeleteConfictException", func() {
+		err := &iamtypes.DeleteConflictException{}
+		Expect(IsDeleteConfictException(err)).To(BeTrue())
+		Expect(IsDeleteConfictException(errors.New("random error"))).To(BeFalse())
+	})
+
 })

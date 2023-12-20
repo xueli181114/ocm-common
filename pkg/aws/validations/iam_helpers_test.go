@@ -34,7 +34,7 @@ var _ = Describe("AWS iamtypes Functions", func() {
 
 	Describe("isManagedRole", func() {
 		It("should return true if the 'ManagedPolicies' tag has the value 'true'", func() {
-			roleTags := []*iamtypes.Tag{
+			roleTags := []iamtypes.Tag{
 				{Key: aws.String(ManagedPolicies), Value: aws.String("true")},
 			}
 
@@ -44,7 +44,7 @@ var _ = Describe("AWS iamtypes Functions", func() {
 		})
 
 		It("should return false if the 'ManagedPolicies' tag does not have the value 'true'", func() {
-			roleTags := []*iamtypes.Tag{
+			roleTags := []iamtypes.Tag{
 				{Key: aws.String(ManagedPolicies), Value: aws.String("false")},
 			}
 
@@ -54,7 +54,7 @@ var _ = Describe("AWS iamtypes Functions", func() {
 		})
 
 		It("should return false if the 'ManagedPolicies' tag is not present", func() {
-			roleTags := []*iamtypes.Tag{
+			roleTags := []iamtypes.Tag{
 				{Key: aws.String("SomeOtherTag"), Value: aws.String("true")},
 			}
 
@@ -65,10 +65,10 @@ var _ = Describe("AWS iamtypes Functions", func() {
 	})
 
 	var _ = Describe("HasCompatibleVersionTags", func() {
-		var iamtypesTags []*iamtypes.Tag
+		var iamtypesTags []iamtypes.Tag
 
 		BeforeEach(func() {
-			iamtypesTags = []*iamtypes.Tag{
+			iamtypesTags = []iamtypes.Tag{
 				{Key: aws.String(OpenShiftVersion), Value: aws.String("1.2.3")},
 				{Key: aws.String("SomeOtherTag"), Value: aws.String("value")},
 			}
@@ -94,7 +94,7 @@ var _ = Describe("AWS iamtypes Functions", func() {
 
 		It("should return false if the version tag is not present", func() {
 			version := "1.2.3"
-			iamtypesTags = []*iamtypes.Tag{
+			iamtypesTags = []iamtypes.Tag{
 				{Key: aws.String("SomeOtherTag"), Value: aws.String("value")},
 			}
 
@@ -116,7 +116,7 @@ var _ = Describe("AWS iamtypes Functions", func() {
 
 	var _ = Describe("iamtypesResourceHasTag", func() {
 		It("should return true if the tag with the specified key and value exists", func() {
-			iamtypesTags := []*iamtypes.Tag{
+			iamtypesTags := []iamtypes.Tag{
 				{Key: aws.String("Tag1"), Value: aws.String("Value1")},
 				{Key: aws.String("Tag2"), Value: aws.String("Value2")},
 			}
@@ -129,7 +129,7 @@ var _ = Describe("AWS iamtypes Functions", func() {
 		})
 
 		It("should return false if the tag with the specified key and value does not exist", func() {
-			iamtypesTags := []*iamtypes.Tag{
+			iamtypesTags := []iamtypes.Tag{
 				{Key: aws.String("Tag1"), Value: aws.String("Value1")},
 				{Key: aws.String("Tag2"), Value: aws.String("Value2")},
 			}

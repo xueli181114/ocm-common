@@ -25,4 +25,18 @@ var _ = Describe("AWS Utils", func() {
 			Expect(err).To(HaveOccurred())
 		})
 	})
+
+	var _ = Describe("Validates TruncateRoleName function", func() {
+		It("Doesn't do anything", func() {
+			smallerThanByteInLength := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+			truncated := TruncateRoleName(smallerThanByteInLength)
+			Expect(smallerThanByteInLength).To(Equal(truncated))
+		})
+		It("Truncate when bigger than 64", func() {
+			smallerThanByteInLength := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+			truncated := TruncateRoleName(smallerThanByteInLength)
+			Expect(len(truncated)).To(Equal(64))
+			Expect(smallerThanByteInLength).To(Equal(truncated + "a"))
+		})
+	})
 })

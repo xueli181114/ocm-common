@@ -38,3 +38,10 @@ func RandomLabel(size int) string {
 	}
 	return string(chars)
 }
+
+func Truncate(s string, truncateLength int) string {
+	if len(s) > truncateLength {
+		s = s[0:truncateLength]
+	}
+	return s
+}

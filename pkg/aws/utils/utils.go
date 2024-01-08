@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	commonUtils "github.com/openshift-online/ocm-common/pkg/utils"
 )
 
 func GetPathFromArn(arnStr string) (string, error) {
@@ -19,4 +20,8 @@ func GetPathFromArn(arnStr string) (string, error) {
 	}
 	path := resource[firstIndex : lastIndex+1]
 	return path, nil
+}
+
+func TruncateRoleName(name string) string {
+	return commonUtils.Truncate(name, commonUtils.MaxByteSize)
 }

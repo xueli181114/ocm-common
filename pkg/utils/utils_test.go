@@ -27,4 +27,17 @@ var _ = Describe("Utils", func() {
 			})
 		})
 	})
+	var _ = Describe("Validates Truncate function", func() {
+		It("Doesn't do anything", func() {
+			smallerThanByteInLength := "aaaaa"
+			truncated := Truncate(smallerThanByteInLength, 5)
+			Expect(smallerThanByteInLength).To(Equal(truncated))
+		})
+		It("Truncate when bigger than supplied value", func() {
+			smallerThanByteInLength := "aaaaaa"
+			truncated := Truncate(smallerThanByteInLength, 5)
+			Expect(len(truncated)).To(Equal(5))
+			Expect(smallerThanByteInLength).To(Equal(truncated + "a"))
+		})
+	})
 })

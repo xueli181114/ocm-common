@@ -4,10 +4,10 @@ import (
 	"errors"
 
 	iamtypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
-	smithy "github.com/aws/smithy-go"
+	"github.com/aws/smithy-go"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
 )
 
 var _ = Describe("Error Checks", func() {

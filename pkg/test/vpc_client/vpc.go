@@ -153,8 +153,13 @@ func PrepareVPC(vpcName string, region string, vpcCIDR string, checkExisting boo
 	if vpcCIDR == "" {
 		vpcCIDR = CON.DefaultVPCCIDR
 	}
-	log.LogInfo("Going to prepare a vpc with name %s, on region %s, with cidr %s and subnets on zones %s",
+	logMessage := fmt.Sprintf("Going to prepare a vpc with name %s, on region %s, with cidr %s and subnets on zones %s",
 		vpcName, region, vpcCIDR, strings.Join(zones, ","))
+	if len(zones) == 0 {
+		logMessage = fmt.Sprintf("Going to prepare a vpc with name %s, on region %s, with cidr %s ",
+			vpcName, region, vpcCIDR)
+	}
+	log.LogInfo(logMessage)
 	awsclient, err := aws_client.CreateAWSClient("", region)
 	if err != nil {
 		log.LogError("Create AWS Client due to error: %s", err.Error())

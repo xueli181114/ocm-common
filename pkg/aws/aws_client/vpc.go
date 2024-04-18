@@ -91,7 +91,7 @@ func (client *AWSClient) ModifyVpcDnsAttribute(vpcID string, dnsAttribute string
 		log.LogError("Modify vpc dns attribute failed " + err.Error())
 		return nil, err
 	}
-	log.LogInfo("Modify vpc dns attribute success" + vpcID + dnsAttribute)
+	log.LogInfo("Modify vpc dns attribute %s success for %s", dnsAttribute, vpcID)
 	return resp, err
 }
 

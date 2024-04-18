@@ -24,9 +24,8 @@ func NewCIDRPool(vpcCIDR string) *VPCCIDRPool {
 func (v *VPCCIDRPool) GenerateSubnetPool(prefix int) {
 	subnetcidrs := []*SubnetCIDR{}
 	_, vpcSubnet, _ := net.ParseCIDR(v.CIDR)
-	currentSubnet, _ := cidr.PreviousSubnet(vpcSubnet, prefix)
+	currentSubnet, finished := cidr.PreviousSubnet(vpcSubnet, prefix)
 	for {
-		currentSubnet, finished := cidr.NextSubnet(currentSubnet, prefix)
 		if !finished && vpcSubnet.Contains(currentSubnet.IP) {
 			subnetcidr := SubnetCIDR{
 				IPNet: currentSubnet,
@@ -36,6 +35,7 @@ func (v *VPCCIDRPool) GenerateSubnetPool(prefix int) {
 		} else {
 			break
 		}
+		currentSubnet, finished = cidr.NextSubnet(currentSubnet, prefix)
 	}
 	v.SubNetPool = subnetcidrs
 }

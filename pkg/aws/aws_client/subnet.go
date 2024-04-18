@@ -21,7 +21,7 @@ func (client *AWSClient) CreateSubnet(vpcID string, region string, zone string, 
 
 	input := &ec2.CreateSubnetInput{
 		VpcId:              aws.String(vpcID),
-		AvailabilityZone:   aws.String(fmt.Sprintf(region + zone)),
+		AvailabilityZone:   aws.String(zone),
 		AvailabilityZoneId: nil,
 		CidrBlock:          aws.String(subnetCidr),
 		DryRun:             nil,
@@ -64,10 +64,10 @@ func (client *AWSClient) DeleteSubnet(subnetID string) (*ec2.DeleteSubnetOutput,
 
 	resp, err := client.Ec2Client.DeleteSubnet(context.TODO(), input)
 	if err != nil {
-		log.LogError("Delete subnet error " + err.Error())
+		log.LogError("Delete subnet %s meets error %s", subnetID, err.Error())
 		return nil, err
 	}
-	log.LogInfo("Delete subnet success " + subnetID)
+	log.LogInfo("Delete subnet %s successfully ", subnetID)
 	return resp, err
 }
 

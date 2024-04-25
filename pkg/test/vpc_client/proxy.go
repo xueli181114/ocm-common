@@ -7,13 +7,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 
 	CON "github.com/openshift-online/ocm-common/pkg/aws/consts"
+	"github.com/openshift-online/ocm-common/pkg/file"
 	"github.com/openshift-online/ocm-common/pkg/log"
 )
 
 // LaunchProxyInstance will launch a proxy instance on the indicated zone.
 // If set imageID to empty, it will find the proxy image in the ProxyImageMap map
 // LaunchProxyInstance will return proxyInstance detail, privateIPAddress,CAcontent and error
-func (vpc *VPC) LaunchProxyInstance(imageID string, zone string, sshKey string) (types.Instance, string, string, error) {
+func (vpc *VPC) LaunchProxyInstance(imageID string, zone string, keypairName string, privateKeyPath string) (in types.Instance, privateIP string, proxyServerCA string, err error) {
 	var inst types.Instance
 	if imageID == "" {
 		var ok bool
@@ -46,20 +47,40 @@ func (vpc *VPC) LaunchProxyInstance(imageID string, zone string, sshKey string) 
 		return inst, "", "", err
 	}
 
-	instOut, err := vpc.AWSClient.LaunchInstance(pubSubnet.ID, imageID, 1, "t3.medium", CON.InstanceKeyName, []string{SGID}, true)
+	keyName := fmt.Sprintf("%s-%s", CON.InstanceKeyNamePrefix, keypairName)
+	key, err := vpc.CreateKeyPair(keyName)
+	if err != nil {
+		log.LogError("Create key pair %s failed %s", keyName, err)
+		return inst, "", "", err
+	}
+	tags := map[string]string{
+		"Name": CON.ProxyName,
+	}
+	_, err = vpc.AWSClient.TagResource(*key.KeyPairId, tags)
+	if err != nil {
+		log.LogError("Add tag for key pair %s failed %s", *key.KeyPairId, err)
+		return inst, "", "", err
+	}
+	privateKeyName := fmt.Sprintf("%s-%s", keypairName, "keyPair.pem")
+	sshKey, err := file.WriteToFile(*key.KeyMaterial, privateKeyName, privateKeyPath)
+	if err != nil {
+		log.LogError("Write private key to file failed %s", err)
+		return inst, "", "", err
+	}
+
+	instOut, err := vpc.AWSClient.LaunchInstance(pubSubnet.ID, imageID, 1, "t3.medium", keyName, []string{SGID}, true)
 	if err != nil {
 		log.LogError("Launch proxy instance failed %s", err)
 		return inst, "", "", err
 	} else {
 		log.LogInfo("Launch proxy instance %s succeed", *instOut.Instances[0].InstanceId)
 	}
-	tags := map[string]string{
-		"Name": CON.ProxyName,
-	}
+
 	instID := *instOut.Instances[0].InstanceId
 	_, err = vpc.AWSClient.TagResource(instID, tags)
 	if err != nil {
-		return inst, "", "", fmt.Errorf("tag instance %s failed:%s", instID, err)
+		log.LogError("Add tag for instance  %s failed %s", instID, err)
+		return inst, "", "", err
 	}
 
 	publicIP, err := vpc.AWSClient.AllocateEIPAndAssociateInstance(instID)
@@ -83,7 +104,6 @@ func (vpc *VPC) LaunchProxyInstance(imageID string, zone string, sshKey string) 
 		log.LogError("login instance to run cmd %s failed %s", cmd2, err)
 		return inst, "", "", err
 	}
-
 	return instOut.Instances[0], *instOut.Instances[0].PrivateIpAddress, caContent, err
 }
 

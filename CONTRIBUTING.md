@@ -69,23 +69,9 @@ This repository uses GitHub actions which are configured at `./github/workflows`
 
 ## Releasing a new OCM-Common Version
 
-Releasing a new version requires submitting an MR for review/merge with an update to the `Version` constant in
-[version.go](version.go). Additionally, update the [CHANGES.md](CHANGES.md) file to include the new version and
-describe all changes included.
+Releases are handled via GitHub action and goreleaser. Simply push a version tag to create a release.
 
-Below is an example CHANGES.md update:
-
-```
-## 0.1.39 Jul 3 2023
-
-- Bump github.com/onsi/ginkgo/v2 from 2.8.1 to 2.9.1
-- Update CONTRIBUTING.md contribution instructions
-- Added new unit test in sample_test.go
-```
-
-Submit an MR for review/merge with the CHANGES.md and version.go update.
-
-Finally, create and submit a new tag with the new version following the below example:
+Create and submit a new tag with the new version following the below example:
 
 ```shell
 git checkout main

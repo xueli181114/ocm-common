@@ -14,6 +14,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.30.0
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.40.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.5
+	github.com/go-jose/go-jose/v4 v4.0.2
 	github.com/hashicorp/go-version v1.6.0
 	github.com/onsi/ginkgo/v2 v2.17.1
 	github.com/onsi/gomega v1.30.0
@@ -21,7 +22,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	go.uber.org/mock v0.3.0
 	golang.org/x/crypto v0.22.0
-	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
 require github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect

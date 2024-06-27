@@ -2,11 +2,13 @@ package validations
 
 import (
 	"fmt"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	iamtypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	cmv1 "github.com/openshift-online/ocm-sdk-go/clustersmgmt/v1"
 )
 
 var _ = Describe("AWS iamtypes Functions", func() {
@@ -139,6 +141,51 @@ var _ = Describe("AWS iamtypes Functions", func() {
 			result := IamResourceHasTag(iamtypesTags, tagKey, tagValue)
 
 			Expect(result).To(BeFalse())
+		})
+	})
+
+	var _ = Describe("IamRoleArnsValidator", func() {
+		It("should return error if duplicate arns exist", func() {
+			fakeCluster, err := cmv1.NewCluster().
+				AWS(
+					cmv1.NewAWS().
+						STS(
+							cmv1.NewSTS().
+								RoleARN("installer").
+								SupportRoleARN("support").
+								InstanceIAMRoles(
+									cmv1.NewInstanceIAMRoles().
+										MasterRoleARN("installer").
+										WorkerRoleARN("worker"),
+								),
+						),
+				).Build()
+			Expect(err).ToNot(HaveOccurred())
+			err = IamRoleArnsValidator(fakeCluster)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal(
+				fmt.Sprintf(duplicateIamRoleArnErrorMsg, "installer"),
+			))
+		})
+
+		It("should return nil no duplicate arns are detected", func() {
+			fakeCluster, err := cmv1.NewCluster().
+				AWS(
+					cmv1.NewAWS().
+						STS(
+							cmv1.NewSTS().
+								RoleARN("installer").
+								SupportRoleARN("support").
+								InstanceIAMRoles(
+									cmv1.NewInstanceIAMRoles().
+										MasterRoleARN("controlplane").
+										WorkerRoleARN("worker"),
+								),
+						),
+				).Build()
+			Expect(err).ToNot(HaveOccurred())
+			err = IamRoleArnsValidator(fakeCluster)
+			Expect(err).ToNot(HaveOccurred())
 		})
 	})
 })

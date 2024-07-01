@@ -6,4 +6,5 @@ ocm-common
 .envrc
 .env
 cover.out
+dist/
 

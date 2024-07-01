@@ -1,0 +1,24 @@
+version: 1
+
+builds:
+  - skip: true
+
+release:
+  prerelease: auto
+  mode: append
+
+changelog:
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^.*?(?:[a-zA-Z]+-\d+ \| )?feat(?:\([[:word:]]+\))??!?:.+'
+      order: 0
+    - title: "Bug fixes"
+      regexp: '^.*?(?:[a-zA-Z]+-\d+ \| )?fix(?:\([[:word:]]+\))??!?:.+'
+      order: 1
+    - title: Others
+      order: 999
+  filters:
+    exclude:
+      - '^Merge pull request #'
+      - '^Merge branch '

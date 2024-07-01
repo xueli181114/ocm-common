@@ -371,3 +371,27 @@ func (client *AWSClient) ListRoleAttachedPolicies(roleName string) ([]types.Atta
 	policies = policyOut.AttachedPolicies
 	return policies, nil
 }
+func (client *AWSClient) TagRole(roleName string, tags map[string]string) error {
+	var roleTags []types.Tag
+	for tagKey, tagValue := range tags {
+		roleTags = append(roleTags, types.Tag{
+			Key:   &tagKey,
+			Value: &tagValue,
+		})
+	}
+	input := &iam.TagRoleInput{
+		RoleName: &roleName,
+		Tags:     roleTags,
+	}
+	_, err := client.IamClient.TagRole(context.TODO(), input)
+	return err
+}
+
+func (client *AWSClient) UntagRole(roleName string, tagKeys []string) error {
+	input := &iam.UntagRoleInput{
+		RoleName: &roleName,
+		TagKeys:  tagKeys,
+	}
+	_, err := client.IamClient.UntagRole(context.TODO(), input)
+	return err
+}
